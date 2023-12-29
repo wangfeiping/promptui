@@ -130,6 +130,7 @@ func (c *Cursor) FormatMask(mask rune) string {
 
 	r := make([]rune, len(c.input))
 	for i := range r {
+		fmt.Printf("r[%d]: %d\n", i, r[i])
 		if r[i] != ' ' {
 			r[i] = mask
 		}
