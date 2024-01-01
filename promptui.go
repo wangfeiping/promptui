@@ -24,4 +24,4 @@ var ErrAbort = errors.New("")
 
 // ValidateFunc is a placeholder type for any validation functions that validates a given input. It should return
 // a ValidationError if the input is not valid.
-type ValidateFunc func(string) error
+type ValidateFunc func(string, rune) error

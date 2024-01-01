@@ -58,19 +58,22 @@ type Prompt struct {
 // text/template syntax. Custom state, colors and background color are available for use inside
 // the templates and are documented inside the Variable section of the docs.
 //
-// Examples
+// # Examples
 //
 // text/templates use a special notation to display programmable content. Using the double bracket notation,
 // the value can be printed with specific helper functions. For example
 //
 // This displays the value given to the template as pure, unstylized text.
-// 	'{{ . }}'
+//
+//	'{{ . }}'
 //
 // This displays the value colored in cyan
-// 	'{{ . | cyan }}'
+//
+//	'{{ . | cyan }}'
 //
 // This displays the value colored in red with a cyan background-color
-// 	'{{ . | red | cyan }}'
+//
+//	'{{ . | red | cyan }}'
 //
 // See the doc of text/template for more info: https://golang.org/pkg/text/template/
 type PromptTemplates struct {
@@ -143,7 +146,7 @@ func (p *Prompt) Run() (string, error) {
 	rl.Write([]byte(hideCursor))
 	sb := screenbuf.New(rl)
 
-	validFn := func(x string) error {
+	validFn := func(x string, k rune) error {
 		return nil
 	}
 	if p.Validate != nil {
@@ -160,7 +163,7 @@ func (p *Prompt) Run() (string, error) {
 
 	listen := func(input []rune, pos int, key rune) ([]rune, int, bool) {
 		_, _, keepOn := cur.Listen(input, pos, key)
-		err := validFn(cur.Get())
+		err := validFn(cur.Get(), key)
 		var prompt []byte
 
 		if err != nil {
@@ -193,7 +196,9 @@ func (p *Prompt) Run() (string, error) {
 
 	for {
 		_, err = rl.Readline()
-		inputErr = validFn(cur.Get())
+		// fmt.Printf("loop\n")
+		// fmt.Printf("input: %s;\n", cur.Get())
+		inputErr = validFn(cur.Get(), '\n')
 		if inputErr == nil {
 			break
 		}

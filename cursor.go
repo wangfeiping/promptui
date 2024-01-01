@@ -122,6 +122,16 @@ func (c *Cursor) Format() string {
 	return format(r, c)
 }
 
+func checkMask(beginMask bool, r rune, mask rune) rune {
+	if !beginMask {
+		return r
+	}
+	if r == ' ' {
+		return ' '
+	}
+	return mask
+}
+
 // FormatMask replaces all input runes with the mask rune.
 func (c *Cursor) FormatMask(mask rune) string {
 	if mask == ' ' {
@@ -129,12 +139,13 @@ func (c *Cursor) FormatMask(mask rune) string {
 	}
 
 	r := make([]rune, len(c.input))
-	for i := range r {
-		if c.input[i] == ' ' {
-			r[i] = ' '
-		} else {
-			r[i] = mask
+	beginMask := false
+	for i := len(c.input) - 1; i >= 0; i-- {
+		if !beginMask && c.input[i] == ' ' {
+			beginMask = true
 		}
+
+		r[i] = checkMask(beginMask, c.input[i], mask)
 	}
 	return format(r, c)
 }
